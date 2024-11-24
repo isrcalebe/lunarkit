@@ -156,3 +156,84 @@ lk_obj_create = function()
 end
 
 --#endregion
+
+--#region LunarKit Dump
+
+---The options to use for dumping a `table`.
+---
+---@class lk_dump_options
+---@field public depth? number The maximum depth to traverse. (default: `math.huge`)
+---@field public indent_size? number The number of spaces to use for indentation. (default: `2`)
+---@field public new_line? string | '\n' The string to use for new lines. (default: `'\n'`)
+
+---Dumps a `table` to a string representation.
+---
+---This function serializes a `table` into a string, with options to control
+---the depth of serialization, indentation, and newline characters.
+---
+---@param object table The object to dump.
+---@param options lk_dump_options? The options to use for dumping.
+---@return string result The string representation of the object.
+lk_dump = function(object, options)
+  options = options or {}
+
+  local depth = options.depth or math.huge
+  local indent = string.rep(' ', options.indent_size or 2)
+  local new_line = options.new_line or '\n'
+
+  local lk_dump_serialize
+  lk_dump_serialize = function(object, current_depth, path)
+    if current_depth > depth then return '(...)' end
+
+    local object_type = type(object)
+
+    if object_type == 'string' then
+      return string.format('%q', object)
+    elseif
+      object_type == 'number'
+      or object_type == 'boolean'
+      or object_type == 'nil'
+    then
+      return tostring(object)
+    elseif object_type == 'function' then
+      return tostring(object)
+    elseif object_type == 'table' then
+      if path[object] then return '(circular reference)' end
+
+      path[object] = true
+
+      local parts = {}
+      table.insert(parts, '{')
+
+      for k, v in pairs(object) do
+        local key = type(k) == 'string' and string.format('[%q]', k)
+          or string.format('[%s]', tostring(k))
+        local value = lk_dump_serialize(v, current_depth + 1, path)
+
+        table.insert(
+          parts,
+          indent:rep(current_depth) .. key .. ' = ' .. value .. ','
+        )
+      end
+
+      table.insert(parts, indent:rep(current_depth - 1) .. '}')
+      path[object] = nil
+
+      return table.concat(parts, new_line)
+    else
+      return string.format('(unsupported type: %s)', object_type)
+    end
+  end
+
+  return lk_dump_serialize(object, 1, {})
+end
+
+---Dumps a `table` to a string representation and prints it to the console.
+---
+---@param object table The object to dump.
+---@param options lk_dump_options? The options to use for dumping.
+lk_dump_print = function(object, options)
+  print(lk_dump(object, options))
+end
+
+--#endregion

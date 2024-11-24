@@ -11,6 +11,8 @@
     }
   },
   "diagnostics.globals": [
-    "lk_obj_create"
+    "lk_obj_create",
+    "lk_dump",
+    "lk_dump_print"
   ]
 }
