@@ -9,5 +9,8 @@
       "indent_style": "space",
       "indent_size": "2"
     }
-  }
+  },
+  "diagnostics.globals": [
+    "lk_obj_create"
+  ]
 }
