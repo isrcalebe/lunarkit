@@ -13,6 +13,13 @@
   "diagnostics.globals": [
     "lk_obj_create",
     "lk_dump",
-    "lk_dump_print"
+    "lk_dump_print",
+    "lk_ansi_setup",
+    "lk_ansi",
+    "lk_ansi_palette",
+    "lk_ansi_raw_paint",
+    "lk_ansi_paint",
+    "lk_ansi_no_paint",
+    "lk_ansi_html_tags"
   ]
 }
